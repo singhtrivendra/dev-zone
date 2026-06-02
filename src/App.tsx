@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { 
   Search, 
   Copy, 
@@ -25,6 +26,8 @@ import {
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
 import { InteractivePreview } from './components/InteractivePreview';
+import ResponsiveMultiLevelNavigation from './components/ResponsiveMultiLevelNavigation';
+import NotFound from './components/NotFound';
 
 type TechFramework = 'html' | 'react' | 'nextjs' | 'vue' | 'angular';
 type ColorAccent = 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
@@ -191,7 +194,10 @@ export default function App() {
   ];
 
   return (
-    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={
+          <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* Background Mesh Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none mesh-bg"></div>
@@ -722,6 +728,15 @@ export default function App() {
         </div>
       )}
 
-    </div>
+          </div>
+        } />
+        <Route path="/navigation" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/dashboard" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/workspace/*" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/reports/*" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/support/*" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
