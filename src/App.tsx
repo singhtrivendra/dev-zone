@@ -40,8 +40,15 @@ export default function App() {
   const [previewSizes, setPreviewSizes] = useState<Record<string, 'desktop' | 'tablet' | 'mobile'>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   
-  // Theme state (dark mode by default)
-  const [darkMode, setDarkMode] = useState(true);
+  // Theme state (dark mode by default, persisted in localStorage)
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored === 'dark';
+      return document.documentElement.classList.contains('dark') || !stored;
+    }
+    return true;
+  });
 
   // Playground workspace state
   const [showPlayground, setShowPlayground] = useState(false);
@@ -51,15 +58,17 @@ export default function App() {
   <button class="px-4 py-2 rounded-xl bg-white text-violet-600 text-xs font-bold hover:scale-105 active:scale-95 transition-all">Interactive Action</button>
 </div>`);
 
-  // Sync dark class on body
+  // Sync dark class on root and save theme preference in localStorage
   useEffect(() => {
     const root = window.document.documentElement;
     if (darkMode) {
       root.classList.add('dark');
       root.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
     } else {
       root.classList.add('light');
       root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
