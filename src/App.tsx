@@ -22,7 +22,9 @@ import {
   Layers,
   ArrowRight,
   ChevronRight,
-  X
+  X,
+  GitBranch,
+  ArrowUp
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
 import { InteractivePreview } from './components/InteractivePreview';
@@ -193,6 +195,17 @@ export default function App() {
     { id: 'angular', name: 'Angular', logo: '🔴' }
   ];
 
+  const FOOTER_LINKS = [
+    { label: 'Components', href: '#components' },
+    { label: 'Workflow', href: '#workflow' },
+    { label: 'Contribute', href: 'https://github.com/singhtrivendra/dev-zone', external: true },
+    { label: 'Issue #132', href: 'https://github.com/singhtrivendra/dev-zone/issues/132', external: true }
+  ];
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -344,7 +357,7 @@ export default function App() {
         </section>
 
         {/* COMPONENT EXPLORER */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-8">
+        <section id="components" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-8">
           
           {/* SIDEBAR CATEGORIES */}
           <div className="lg:col-span-3 sticky top-28 z-40">
@@ -572,7 +585,7 @@ export default function App() {
         </section>
 
         {/* FAQ / HIGHLIGHT SECTION */}
-        <section className="py-16 md:py-24 border-t border-slate-200 dark:border-slate-800 mt-16 max-w-5xl mx-auto">
+        <section id="workflow" className="py-16 md:py-24 border-t border-slate-200 dark:border-slate-800 mt-16 max-w-5xl mx-auto">
           
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">Designed for Premium Developer Workflows</h2>
@@ -616,16 +629,46 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-[#040407]/90 py-8 text-center text-xs text-slate-500 font-semibold tracking-wide">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5">
+      <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-[#040407]/95 py-8 text-xs text-slate-400 font-semibold tracking-wide" aria-label="Footer">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div className="flex items-center gap-1.5 text-slate-200">
             <span className="text-indigo-500">⚡</span>
             <span>FreeUI - Open Source Component Portal.</span>
           </div>
+          <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="Footer navigation">
+            {FOOTER_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noreferrer' : undefined}
+                className="rounded-lg px-2.5 py-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
           <div className="flex items-center gap-2">
             <span>Made with</span>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
-            <span>for Developers & Designers worldwide.</span>
+            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" aria-hidden="true" />
+            <a
+              href="https://github.com/singhtrivendra/dev-zone"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Visit FreeUI on GitHub"
+              className="rounded-full p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            >
+              <GitBranch className="w-4 h-4" aria-hidden="true" />
+            </a>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Scroll back to top"
+              className="inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-2 text-slate-300 transition-colors hover:border-indigo-400 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            >
+              <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />
+              Top
+            </button>
           </div>
         </div>
       </footer>
