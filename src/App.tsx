@@ -19,12 +19,10 @@ import {
   Heart,
   Code,
   Layers,
-  ArrowRight,
-  ChevronRight,
   X
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
-import { InteractivePreview } from './components/InteractivePreview';
+const InteractivePreview = React.lazy(() => import('./components/InteractivePreview').then(m => ({ default: m.InteractivePreview })));
 
 type TechFramework = 'html' | 'react' | 'nextjs' | 'vue' | 'angular';
 type ColorAccent = 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
@@ -475,7 +473,9 @@ export default function App() {
                           <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30"></div>
                           
                           <div className={`w-full flex items-center justify-center transition-all duration-500 ${getSizingClass(compSize)}`}>
-                            <InteractivePreview id={comp.id} color={compAccent} />
+                            <React.Suspense fallback={<div className="text-xs text-slate-400 font-mono p-4 text-center animate-pulse">Loading preview...</div>}>
+                              <InteractivePreview id={comp.id} color={compAccent} />
+                            </React.Suspense>
                           </div>
                         </div>
                       </div>
