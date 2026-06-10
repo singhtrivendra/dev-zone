@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
   Search, 
   Copy, 
@@ -19,8 +19,6 @@ import {
   Heart,
   Code,
   Layers,
-  ArrowRight,
-  ChevronRight,
   X
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
@@ -236,6 +234,8 @@ export default function App() {
                 <button
                   key={fw.id}
                   onClick={() => setGlobalTab(fw.id)}
+                  onKeyDown={(e) => handleTabKeyDown(e, globalTab, FRAMEWORKS, (id) => setGlobalTab(id as TechFramework))}
+                  tabIndex={globalTab === fw.id ? 0 : -1}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${globalTab === fw.id ? 'bg-primary text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   <span className="mr-1 text-[10px]">{fw.logo}</span>
@@ -251,6 +251,7 @@ export default function App() {
             {/* Theme Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
+              onKeyDown={(e) => handleSwitchKeyDown(e, darkMode, setDarkMode)}
               className="p-2.5 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5 hover:bg-black/30 dark:hover:bg-white/10 text-slate-400 hover:text-white transition-all duration-300"
               title="Toggle Theme"
             >
@@ -357,7 +358,38 @@ export default function App() {
 
                   {CATEGORIES.map(cat => {
                     const count = COMPONENTS.filter(c => c.category === cat.id).length;
-                    return (
+  const handleTabKeyDown = useCallback((
+    e: React.KeyboardEvent,
+    currentId: string,
+    items: readonly { id: string }[],
+    onSelect: (id: string) => void
+  ) => {
+    const idx = items.findIndex(item => item.id === currentId);
+    let nextIdx: number;
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      nextIdx = (idx + 1) % items.length;
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      nextIdx = (idx - 1 + items.length) % items.length;
+    } else {
+      return;
+    }
+    onSelect(items[nextIdx].id);
+  }, []);
+
+  const handleSwitchKeyDown = useCallback((
+    e: React.KeyboardEvent,
+    current: boolean,
+    onToggle: (next: boolean) => void
+  ) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      onToggle(!current);
+    }
+  }, []);
+
+  return (
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
@@ -494,6 +526,8 @@ export default function App() {
                               <button
                                 key={fw.id}
                                 onClick={() => setActiveTabs(prev => ({ ...prev, [comp.id]: fw.id }))}
+                                onKeyDown={(e) => handleTabKeyDown(e, compActiveTab, FRAMEWORKS, (id) => setActiveTabs(prev => ({ ...prev, [comp.id]: id as TechFramework })))}
+                                tabIndex={compActiveTab === fw.id ? 0 : -1}
                                 className={`px-2 py-1 rounded-md text-[10px] font-bold tracking-wide transition-all ${compActiveTab === fw.id ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
                               >
                                 {fw.name}
