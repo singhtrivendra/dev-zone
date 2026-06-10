@@ -24,12 +24,18 @@ import {
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
 import { InteractivePreview } from './components/InteractivePreview';
+import ResponsiveMultiLevelNavigation from './components/ResponsiveMultiLevelNavigation';
+import NotFound from './components/NotFound';
 
 type TechFramework = 'html' | 'react' | 'nextjs' | 'vue' | 'angular';
 type ColorAccent = 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
+  // debouncedQuery lags behind searchQuery by 200 ms so the expensive
+  // useMemo filter only re-runs after the user pauses typing rather than
+  // on every keystroke.
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeTabs, setActiveTabs] = useState<Record<string, TechFramework>>({});
   const [accentColors, setAccentColors] = useState<Record<string, ColorAccent>>({});
@@ -59,6 +65,12 @@ export default function App() {
     }
   }, [darkMode]);
 
+  // Keep debouncedQuery in sync with searchQuery with a 200 ms delay.
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 200);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Global settings synced to all
   const [globalAccent, setGlobalAccent] = useState<ColorAccent>('violet');
   const [globalTab, setGlobalTab] = useState<TechFramework>('react');
@@ -81,12 +93,12 @@ export default function App() {
   // Filter components
   const filteredComponents = useMemo(() => {
     return COMPONENTS.filter(comp => {
-      const matchesSearch = comp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            comp.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = comp.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+                            comp.description.toLowerCase().includes(debouncedQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'all' || comp.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [debouncedQuery, selectedCategory]);
 
   const rowVirtualizer = useVirtualizer({
     count: filteredComponents.length,
@@ -127,14 +139,20 @@ export default function App() {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
+    // Helper: HTML-encode characters that have special meaning in HTML.
+    // Applied to the raw string content (captured before the main pass) so
+    // that user-supplied values cannot inject markup into the span wrapper.
+    const encodeHtml = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     // 1. Temporarily extract string literals to avoid double-highlighting inside HTML attributes
     const strings: string[] = [];
     highlighted = highlighted.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"/g, (_, str) => {
-      strings.push(`<span class="text-[#10b981]">"${str}"</span>`);
+      strings.push(`<span class="text-[#10b981]">"${encodeHtml(str)}"</span>`);
       return `⚡⚡STR_PLACEHOLDER_${strings.length - 1}⚡⚡`;
     });
     highlighted = highlighted.replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_, str) => {
-      strings.push(`<span class="text-[#10b981]">'${str}'</span>`);
+      strings.push(`<span class="text-[#10b981]">'${encodeHtml(str)}'</span>`);
       return `⚡⚡STR_PLACEHOLDER_${strings.length - 1}⚡⚡`;
     });
 
@@ -198,8 +216,22 @@ export default function App() {
     { id: 'angular', name: 'Angular', logo: '🔴' }
   ];
 
+  const FOOTER_LINKS = [
+    { label: 'Components', href: '#components' },
+    { label: 'Workflow', href: '#workflow' },
+    { label: 'Contribute', href: 'https://github.com/singhtrivendra/dev-zone', external: true },
+    { label: 'Issue #132', href: 'https://github.com/singhtrivendra/dev-zone/issues/132', external: true }
+  ];
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={
+          <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* Background Mesh Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none mesh-bg"></div>
@@ -346,7 +378,7 @@ export default function App() {
         </section>
 
         {/* COMPONENT EXPLORER */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-8">
+        <section id="components" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start py-8">
           
           {/* SIDEBAR CATEGORIES */}
           <div className="lg:col-span-3 sticky top-28 z-40">
@@ -399,7 +431,7 @@ export default function App() {
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">No Components Found</h3>
                 <p className="text-sm text-slate-400 max-w-md mx-auto">
-                  We couldn't find any components matching "{searchQuery}". Try searching for other terms like "button", "card", "alert", or reset your category search.
+                  We couldn't find any components matching "{debouncedQuery}". Try searching for other terms like "button", "card", "alert", or reset your category search.
                 </p>
                 <button
                   onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
@@ -564,7 +596,7 @@ export default function App() {
         </section>
 
         {/* FAQ / HIGHLIGHT SECTION */}
-        <section className="py-16 md:py-24 border-t border-slate-200 dark:border-slate-800 mt-16 max-w-5xl mx-auto">
+        <section id="workflow" className="py-16 md:py-24 border-t border-slate-200 dark:border-slate-800 mt-16 max-w-5xl mx-auto">
           
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">Designed for Premium Developer Workflows</h2>
@@ -608,16 +640,46 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-[#040407]/90 py-8 text-center text-xs text-slate-500 font-semibold tracking-wide">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5">
+      <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800 bg-[#040407]/95 py-8 text-xs text-slate-400 font-semibold tracking-wide" aria-label="Footer">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div className="flex items-center gap-1.5 text-slate-200">
             <span className="text-indigo-500">⚡</span>
             <span>FreeUI - Open Source Component Portal.</span>
           </div>
+          <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="Footer navigation">
+            {FOOTER_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noreferrer' : undefined}
+                className="rounded-lg px-2.5 py-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
           <div className="flex items-center gap-2">
             <span>Made with</span>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
-            <span>for Developers & Designers worldwide.</span>
+            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" aria-hidden="true" />
+            <a
+              href="https://github.com/singhtrivendra/dev-zone"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Visit FreeUI on GitHub"
+              className="rounded-full p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            >
+              <GitBranch className="w-4 h-4" aria-hidden="true" />
+            </a>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Scroll back to top"
+              className="inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-2 text-slate-300 transition-colors hover:border-indigo-400 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            >
+              <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />
+              Top
+            </button>
           </div>
         </div>
       </footer>
@@ -673,9 +735,17 @@ export default function App() {
                 <div className="flex-1 rounded-2xl bg-slate-950 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900/80 via-slate-950 to-slate-950 border border-slate-800/80 flex items-center justify-center p-6 relative overflow-auto">
                   <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30"></div>
                   
-                  <div 
-                    className="relative z-10 w-full flex justify-center"
-                    dangerouslySetInnerHTML={{ __html: playgroundCode }}
+                  {/* Render playground code inside a sandboxed iframe so that
+                      any HTML or script in playgroundCode is isolated from the
+                      parent document's origin and cannot access cookies, storage,
+                      or the parent DOM. Tailwind CDN is included so the preview
+                      renders class-based styles correctly. */}
+                  <iframe
+                    className="relative z-10 w-full border-0 rounded-xl"
+                    style={{ minHeight: '200px', background: 'transparent' }}
+                    title="Live preview"
+                    sandbox="allow-scripts"
+                    srcDoc={`<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script><style>body{margin:0;padding:1rem;background:transparent;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;box-sizing:border-box}</style></head><body>${playgroundCode}</body></html>`}
                   />
                 </div>
               </div>
@@ -720,6 +790,15 @@ export default function App() {
         </div>
       )}
 
-    </div>
+          </div>
+        } />
+        <Route path="/navigation" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/dashboard" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/workspace/*" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/reports/*" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="/support/*" element={<ResponsiveMultiLevelNavigation />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
