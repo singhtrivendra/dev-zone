@@ -7,7 +7,7 @@ interface InteractiveGlowTabsProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 }
 
-export const InteractiveGlowTabs: React.FC<InteractiveGlowTabsProps> = ({ color = 'violet' }) => {
+export const InteractiveGlowTabs = React.forwardRef<HTMLDivElement, InteractiveGlowTabsProps>(({ color = 'violet' }, ref) => {
   const [activeTab, setActiveTab] = useState('home');
 
   const accentStyles = {
@@ -27,7 +27,7 @@ export const InteractiveGlowTabs: React.FC<InteractiveGlowTabsProps> = ({ color 
   ];
 
   return (
-    <div className="flex p-1.5 rounded-xl bg-slate-900 border border-slate-800/80 max-w-sm w-full gap-1">
+    <div ref={ref} className="flex p-1.5 rounded-xl bg-slate-900 border border-slate-800/80 max-w-sm w-full gap-1">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -42,6 +42,6 @@ export const InteractiveGlowTabs: React.FC<InteractiveGlowTabsProps> = ({ color 
       })}
     </div>
   );
-};
+});
 
 export default InteractiveGlowTabs;

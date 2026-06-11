@@ -7,7 +7,7 @@ interface InteractiveNeumorphicToggleProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 }
 
-export const InteractiveNeumorphicToggle: React.FC<InteractiveNeumorphicToggleProps> = ({ color = 'violet' }) => {
+export const InteractiveNeumorphicToggle = React.forwardRef<HTMLDivElement, InteractiveNeumorphicToggleProps>(({ color = 'violet' }, ref) => {
   const [isChecked, setIsChecked] = useState(false);
 
   const accentStyles = {
@@ -21,7 +21,7 @@ export const InteractiveNeumorphicToggle: React.FC<InteractiveNeumorphicTogglePr
   const bgStyle = accentStyles[color] || accentStyles.violet;
 
   return (
-    <div className="flex items-center gap-3">
+    <div ref={ref} className="flex items-center gap-3">
       <span className="text-xs font-semibold text-slate-400">System Audio</span>
       <button 
         onClick={() => setIsChecked(!isChecked)}
@@ -36,6 +36,6 @@ export const InteractiveNeumorphicToggle: React.FC<InteractiveNeumorphicTogglePr
       </span>
     </div>
   );
-};
+});
 
 export default InteractiveNeumorphicToggle;

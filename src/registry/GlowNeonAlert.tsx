@@ -8,7 +8,7 @@ interface GlowNeonAlertProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 }
 
-export const GlowNeonAlert: React.FC<GlowNeonAlertProps> = ({ color = 'violet' }) => {
+export const GlowNeonAlert = React.forwardRef<HTMLDivElement, GlowNeonAlertProps>(({ color = 'violet' }, ref) => {
   const [alertVisible, setAlertVisible] = useState(true);
 
   const alertStyles = {
@@ -46,38 +46,38 @@ export const GlowNeonAlert: React.FC<GlowNeonAlertProps> = ({ color = 'violet' }
 
   const current = alertStyles[color] || alertStyles.violet;
 
-  if (!alertVisible) {
-    return (
-      <button 
-        onClick={() => setAlertVisible(true)} 
-        className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs border border-slate-800 transition-colors"
-      >
-        Show Alert Again
-      </button>
-    );
-  }
-
   return (
-    <div className={`relative overflow-hidden w-full max-w-xs p-3.5 rounded-xl border flex items-start gap-3 group transition-all duration-300 ${current.container}`}>
-      <div className={`absolute top-0 left-0 w-1 h-full ${current.line}`}></div>
-      <div className={`p-1.5 rounded-lg shrink-0 ${current.icon}`}>
-        <Info className="w-4 h-4" />
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs font-bold text-white mb-0.5 tracking-wide">System Update</h4>
-          <button onClick={() => setAlertVisible(false)} className="text-[10px] text-slate-500 hover:text-slate-300">✕</button>
+    <div ref={ref}>
+      {!alertVisible ? (
+        <button 
+          onClick={() => setAlertVisible(true)} 
+          className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs border border-slate-800 transition-colors"
+        >
+          Show Alert Again
+        </button>
+      ) : (
+        <div className={`relative overflow-hidden w-full max-w-xs p-3.5 rounded-xl border flex items-start gap-3 group transition-all duration-300 ${current.container}`}>
+          <div className={`absolute top-0 left-0 w-1 h-full ${current.line}`}></div>
+          <div className={`p-1.5 rounded-lg shrink-0 ${current.icon}`}>
+            <Info className="w-4 h-4" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-white mb-0.5 tracking-wide">System Update</h4>
+              <button onClick={() => setAlertVisible(false)} className="text-[10px] text-slate-500 hover:text-slate-300">✕</button>
+            </div>
+            <p className="text-[10px] text-slate-400 leading-normal">
+              Version 2.4.0 is ready. Features custom layout engines and smooth GPU accelerators.
+            </p>
+            <div className="flex items-center gap-3 mt-2">
+              <button className={`text-[10px] font-bold transition-colors ${current.action}`}>Update Now</button>
+              <button className="text-[10px] font-bold text-slate-500 hover:text-slate-400 transition-colors">Later</button>
+            </div>
+          </div>
         </div>
-        <p className="text-[10px] text-slate-400 leading-normal">
-          Version 2.4.0 is ready. Features custom layout engines and smooth GPU accelerators.
-        </p>
-        <div className="flex items-center gap-3 mt-2">
-          <button className={`text-[10px] font-bold transition-colors ${current.action}`}>Update Now</button>
-          <button className="text-[10px] font-bold text-slate-500 hover:text-slate-400 transition-colors">Later</button>
-        </div>
-      </div>
+      )}
     </div>
   );
-};
+});
 
 export default GlowNeonAlert;

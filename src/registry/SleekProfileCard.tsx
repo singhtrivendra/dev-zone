@@ -7,7 +7,7 @@ interface SleekProfileCardProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 }
 
-export const SleekProfileCard: React.FC<SleekProfileCardProps> = ({ color = 'violet' }) => {
+export const SleekProfileCard = React.forwardRef<HTMLDivElement, SleekProfileCardProps>(({ color = 'violet' }, ref) => {
   const profileCardStyles = {
     violet: { glowBorder: 'from-violet-600 to-pink-600', text: 'text-indigo-400', bgGlow: 'bg-indigo-500/10' },
     emerald: { glowBorder: 'from-emerald-600 to-teal-600', text: 'text-teal-400', bgGlow: 'bg-teal-500/10' },
@@ -19,7 +19,7 @@ export const SleekProfileCard: React.FC<SleekProfileCardProps> = ({ color = 'vio
   const current = profileCardStyles[color] || profileCardStyles.violet;
 
   return (
-    <div className="w-full max-w-xs rounded-2xl bg-slate-900 border border-slate-800 p-5 shadow-xl relative overflow-hidden group">
+    <div ref={ref} className="w-full max-w-xs rounded-2xl bg-slate-900 border border-slate-800 p-5 shadow-xl relative overflow-hidden group">
       <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl opacity-20 transition-colors duration-500 ${current.bgGlow}`}></div>
       <div className="flex flex-col items-center">
         <div className="relative mb-4">
@@ -53,6 +53,6 @@ export const SleekProfileCard: React.FC<SleekProfileCardProps> = ({ color = 'vio
       </div>
     </div>
   );
-};
+});
 
 export default SleekProfileCard;

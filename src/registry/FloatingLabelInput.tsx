@@ -7,7 +7,7 @@ interface FloatingLabelInputProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 }
 
-export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 'violet' }) => {
+export const FloatingLabelInput = React.forwardRef<HTMLDivElement, FloatingLabelInputProps>(({ color = 'violet' }, ref) => {
   const [inputValue, setInputValue] = useState('');
 
   const inputStyles = {
@@ -19,7 +19,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 
   };
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div ref={ref} className="relative w-full max-w-xs">
       <input 
         type="text" 
         id="floating_preview_reg"
@@ -36,6 +36,6 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 
       </label>
     </div>
   );
-};
+});
 
 export default FloatingLabelInput;

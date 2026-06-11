@@ -8,7 +8,7 @@ interface GlassmorphicModalProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 }
 
-export const GlassmorphicModal: React.FC<GlassmorphicModalProps> = ({ color = 'violet' }) => {
+export const GlassmorphicModal = React.forwardRef<HTMLDivElement, GlassmorphicModalProps>(({ color = 'violet' }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const accentStyles = {
@@ -42,7 +42,7 @@ export const GlassmorphicModal: React.FC<GlassmorphicModalProps> = ({ color = 'v
   const current = accentStyles[color] || accentStyles.violet;
 
   return (
-    <div className="flex items-center justify-center">
+    <div ref={ref} className="flex items-center justify-center">
       {/* Trigger Button */}
       <button 
         onClick={() => setIsOpen(true)}
@@ -103,6 +103,6 @@ export const GlassmorphicModal: React.FC<GlassmorphicModalProps> = ({ color = 'v
       )}
     </div>
   );
-};
+});
 
 export default GlassmorphicModal;
