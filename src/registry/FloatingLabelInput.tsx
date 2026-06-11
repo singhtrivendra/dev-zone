@@ -2,12 +2,11 @@
 // description: An elegant, fluid input component with a floating placeholder that scales down on focus.
 
 import React, { useState } from 'react';
+import type { BaseComponentProps } from './types';
 
-interface FloatingLabelInputProps {
-  color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
-}
+interface FloatingLabelInputProps extends BaseComponentProps {}
 
-export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 'violet' }) => {
+export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 'violet', id, className: extraClassName, style, 'data-testid': testId, role, tabIndex }) => {
   const [inputValue, setInputValue] = useState('');
 
   const inputStyles = {
@@ -19,7 +18,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 
   };
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div id={id} style={style} data-testid={testId} role={role} tabIndex={tabIndex} className={`relative w-full max-w-xs${extraClassName ? ` ${extraClassName}` : ''}`}>
       <input 
         type="text" 
         id="floating_preview_reg"
