@@ -5,10 +5,28 @@ import React, { useState } from 'react';
 
 interface FloatingLabelInputProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
 }
 
-export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 'violet' }) => {
-  const [inputValue, setInputValue] = useState('');
+export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
+  color = 'violet',
+  value: controlledValue,
+  defaultValue,
+  onChange,
+  placeholder
+}) => {
+  const [internalValue, setInternalValue] = useState(defaultValue ?? '');
+
+  const isControlled = controlledValue !== undefined;
+  const inputValue = isControlled ? controlledValue : internalValue;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) setInternalValue(e.target.value);
+    onChange?.(e.target.value);
+  };
 
   const inputStyles = {
     violet: 'focus:ring-violet-600 peer-focus:text-violet-500 dark:peer-focus:text-violet-400',
@@ -24,8 +42,8 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 
         type="text" 
         id="floating_preview_reg"
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder=" " 
+        onChange={handleChange}
+        placeholder={placeholder ?? ' '}
         className={`block w-full px-4 py-3 text-sm text-white bg-slate-900 border border-slate-850 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:border-transparent peer transition-all duration-300 ${inputStyles[color] || inputStyles.violet}`} 
       />
       <label 
