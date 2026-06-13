@@ -20,12 +20,12 @@ export const GradientBorderButton: React.FC<GradientBorderButtonProps> = ({ colo
   };
 
   return (
-    <button className="relative p-[1.5px] rounded-xl overflow-hidden group bg-transparent transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+    <Component className="relative p-[1.5px] rounded-xl overflow-hidden group bg-transparent transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
       <span className={`absolute inset-0 bg-gradient-to-r rounded-xl opacity-70 group-hover:opacity-100 group-hover:rotate-180 transition-all duration-700 ${gradientBorderStyles[color]}`}></span>
       <span className="relative block px-7 py-3 rounded-[11px] bg-slate-950 text-slate-100 font-semibold group-hover:text-white transition-colors duration-300">
         Explore Collections
       </span>
-    </button>
+    </Component>
   );
 };
 
