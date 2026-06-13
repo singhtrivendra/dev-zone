@@ -24,8 +24,7 @@ import {
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
 import { InteractivePreview } from './components/InteractivePreview';
-import ResponsiveMultiLevelNavigation from './components/ResponsiveMultiLevelNavigation';
-import NotFound from './components/NotFound';
+import ErrorBoundary from './components/ErrorBoundary';
 
 type TechFramework = 'html' | 'react' | 'nextjs' | 'vue' | 'angular';
 type ColorAccent = 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
@@ -264,6 +263,8 @@ export default function App() {
                     key={accent.id}
                     onClick={() => setGlobalAccent(accent.id)}
                     className={`w-3.5 h-3.5 rounded-full ${accent.class} transition-all duration-300 ${globalAccent === accent.id ? `scale-125 ring-2 ring-white ${accent.glow}` : 'hover:scale-110 opacity-70'}`}
+                    aria-label={accent.name}
+                    aria-pressed={globalAccent === accent.id}
                     title={accent.name}
                   />
                 ))}
@@ -271,10 +272,12 @@ export default function App() {
             </div>
 
             {/* Global Framework Control */}
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5">
+            <div role="tablist" aria-label="Framework selection" className="flex items-center gap-1.5 px-2 py-1 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5">
               {FRAMEWORKS.map(fw => (
                 <button
                   key={fw.id}
+                  role="tab"
+                  aria-selected={globalTab === fw.id}
                   onClick={() => setGlobalTab(fw.id)}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${globalTab === fw.id ? 'bg-primary text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
                 >
@@ -290,6 +293,9 @@ export default function App() {
             
             {/* Theme Toggle */}
             <button
+              role="switch"
+              aria-checked={darkMode}
+              aria-label="Toggle dark mode"
               onClick={() => setDarkMode(!darkMode)}
               className="p-2.5 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5 hover:bg-black/30 dark:hover:bg-white/10 text-slate-400 hover:text-white transition-all duration-300"
               title="Toggle Theme"
@@ -385,8 +391,10 @@ export default function App() {
             <div className="glass p-5 rounded-2xl shadow-xl flex flex-col gap-4">
               <div>
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Component Types</h3>
-                <div className="flex flex-col gap-1.5">
+                <div role="tablist" aria-label="Component categories" className="flex flex-col gap-1.5">
                   <button
+                    role="tab"
+                    aria-selected={selectedCategory === 'all'}
                     onClick={() => setSelectedCategory('all')}
                     className={`w-full px-4 py-3 rounded-xl text-xs font-bold tracking-wide flex items-center gap-3 transition-all ${selectedCategory === 'all' ? 'bg-primary text-white shadow-lg shadow-violet-600/20' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
                   >
@@ -400,6 +408,8 @@ export default function App() {
                     return (
                       <button
                         key={cat.id}
+                        role="tab"
+                        aria-selected={selectedCategory === cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
                         className={`w-full px-4 py-3 rounded-xl text-xs font-bold tracking-wide flex items-center gap-3 transition-all ${selectedCategory === cat.id ? 'bg-primary text-white shadow-lg shadow-violet-600/20' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
                       >
