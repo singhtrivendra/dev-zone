@@ -23,8 +23,7 @@ import {
 } from 'lucide-react';
 import { CATEGORIES, ALL_COMPONENTS as COMPONENTS } from './data/components';
 import { InteractivePreview } from './components/InteractivePreview';
-import ResponsiveMultiLevelNavigation from './components/ResponsiveMultiLevelNavigation';
-import NotFound from './components/NotFound';
+import ErrorBoundary from './components/ErrorBoundary';
 
 type TechFramework = 'html' | 'react' | 'nextjs' | 'vue' | 'angular';
 type ColorAccent = 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
@@ -254,6 +253,8 @@ export default function App() {
                     key={accent.id}
                     onClick={() => setGlobalAccent(accent.id)}
                     className={`w-3.5 h-3.5 rounded-full ${accent.class} transition-all duration-300 ${globalAccent === accent.id ? `scale-125 ring-2 ring-white ${accent.glow}` : 'hover:scale-110 opacity-70'}`}
+                    aria-label={accent.name}
+                    aria-pressed={globalAccent === accent.id}
                     title={accent.name}
                   />
                 ))}
@@ -261,10 +262,12 @@ export default function App() {
             </div>
 
             {/* Global Framework Control */}
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5">
+            <div role="tablist" aria-label="Framework selection" className="flex items-center gap-1.5 px-2 py-1 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5">
               {FRAMEWORKS.map(fw => (
                 <button
                   key={fw.id}
+                  role="tab"
+                  aria-selected={globalTab === fw.id}
                   onClick={() => setGlobalTab(fw.id)}
                   onKeyDown={(e) => handleTabKeyDown(e, globalTab, FRAMEWORKS, (id) => setGlobalTab(id as TechFramework))}
                   tabIndex={globalTab === fw.id ? 0 : -1}
@@ -282,6 +285,9 @@ export default function App() {
             
             {/* Theme Toggle */}
             <button
+              role="switch"
+              aria-checked={darkMode}
+              aria-label="Toggle dark mode"
               onClick={() => setDarkMode(!darkMode)}
               onKeyDown={(e) => handleSwitchKeyDown(e, darkMode, setDarkMode)}
               className="p-2.5 rounded-xl bg-black/20 dark:bg-white/5 border border-white/5 hover:bg-black/30 dark:hover:bg-white/10 text-slate-400 hover:text-white transition-all duration-300"
@@ -378,8 +384,10 @@ export default function App() {
             <div className="glass p-5 rounded-2xl shadow-xl flex flex-col gap-4">
               <div>
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Component Types</h3>
-                <div className="flex flex-col gap-1.5">
+                <div role="tablist" aria-label="Component categories" className="flex flex-col gap-1.5">
                   <button
+                    role="tab"
+                    aria-selected={selectedCategory === 'all'}
                     onClick={() => setSelectedCategory('all')}
                     className={`w-full px-4 py-3 rounded-xl text-xs font-bold tracking-wide flex items-center gap-3 transition-all ${selectedCategory === 'all' ? 'bg-primary text-white shadow-lg shadow-violet-600/20' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
                   >
@@ -424,6 +432,8 @@ export default function App() {
   return (
                       <button
                         key={cat.id}
+                        role="tab"
+                        aria-selected={selectedCategory === cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
                         className={`w-full px-4 py-3 rounded-xl text-xs font-bold tracking-wide flex items-center gap-3 transition-all ${selectedCategory === cat.id ? 'bg-primary text-white shadow-lg shadow-violet-600/20' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
                       >
@@ -501,6 +511,7 @@ export default function App() {
                           {(['desktop', 'tablet', 'mobile'] as const).map(size => (
                             <button
                               key={size}
+                              aria-pressed={compSize === size}
                               onClick={() => setPreviewSizes(prev => ({ ...prev, [comp.id]: size }))}
                               className={`p-1.5 rounded-lg transition-all ${compSize === size ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
                               title={`${size.toUpperCase()} Preview`}
@@ -517,6 +528,8 @@ export default function App() {
                               key={accent.id}
                               onClick={() => setAccentColors(prev => ({ ...prev, [comp.id]: accent.id }))}
                               className={`w-3.5 h-3.5 rounded-full ${accent.class} transition-all duration-300 ${compAccent === accent.id ? 'scale-125 ring-2 ring-white' : 'hover:scale-110 opacity-70'}`}
+                              aria-label={accent.name}
+                              aria-pressed={compAccent === accent.id}
                               title={accent.name}
                             />
                           ))}
@@ -539,7 +552,9 @@ export default function App() {
                           <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30"></div>
                           
                           <div className={`w-full flex items-center justify-center transition-all duration-500 ${getSizingClass(compSize)}`}>
-                            <InteractivePreview id={comp.id} color={compAccent} />
+                            <ErrorBoundary>
+                              <InteractivePreview id={comp.id} color={compAccent} />
+                            </ErrorBoundary>
                           </div>
                         </div>
                       </div>
@@ -553,10 +568,12 @@ export default function App() {
                           </div>
                           
                           {/* Framework Select Tabs */}
-                          <div className="flex items-center gap-1">
+                          <div role="tablist" aria-label="Framework selection" className="flex items-center gap-1">
                             {FRAMEWORKS.map(fw => (
                               <button
                                 key={fw.id}
+                                role="tab"
+                                aria-selected={compActiveTab === fw.id}
                                 onClick={() => setActiveTabs(prev => ({ ...prev, [comp.id]: fw.id }))}
                                 onKeyDown={(e) => handleTabKeyDown(e, compActiveTab, FRAMEWORKS, (id) => setActiveTabs(prev => ({ ...prev, [comp.id]: id as TechFramework })))}
                                 tabIndex={compActiveTab === fw.id ? 0 : -1}
