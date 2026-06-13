@@ -6,6 +6,7 @@ import { Sparkles } from 'lucide-react';
 
 interface GlowPremiumButtonProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  as?: React.ElementType;
 }
 
 export const GlowPremiumButton = React.forwardRef<HTMLButtonElement, GlowPremiumButtonProps>(({ color = 'violet' }, ref) => {
@@ -23,7 +24,7 @@ export const GlowPremiumButton = React.forwardRef<HTMLButtonElement, GlowPremium
         Get Started Free <Sparkles className="w-4 h-4" />
       </span>
       <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
-    </button>
+    </Component>
   );
 });
 

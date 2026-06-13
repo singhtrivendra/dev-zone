@@ -5,6 +5,7 @@ import React from 'react';
 
 interface ContributedButtonProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  as?: React.ElementType;
 }
 
 export const ContributedButton = React.forwardRef<HTMLButtonElement, ContributedButtonProps>(({ color = 'violet' }, ref) => {
@@ -19,6 +20,6 @@ export const ContributedButton = React.forwardRef<HTMLButtonElement, Contributed
   return (
     <button ref={ref} className={`px-6 py-2.5 rounded-xl text-white font-bold bg-gradient-to-r transition-all duration-300 hover:scale-[1.05] active:scale-[0.95] ${accentStyles[color] || accentStyles.violet}`}>
       Dynamic Button PR
-    </button>
+    </Component>
   );
 });

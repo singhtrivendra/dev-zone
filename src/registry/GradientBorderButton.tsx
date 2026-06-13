@@ -5,6 +5,7 @@ import React from 'react';
 
 interface GradientBorderButtonProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  as?: React.ElementType;
 }
 
 export const GradientBorderButton = React.forwardRef<HTMLButtonElement, GradientBorderButtonProps>(({ color = 'violet' }, ref) => {
@@ -22,7 +23,7 @@ export const GradientBorderButton = React.forwardRef<HTMLButtonElement, Gradient
       <span className="relative block px-7 py-3 rounded-[11px] bg-slate-950 text-slate-100 font-semibold group-hover:text-white transition-colors duration-300">
         Explore Collections
       </span>
-    </button>
+    </Component>
   );
 });
 
