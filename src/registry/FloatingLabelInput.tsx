@@ -20,13 +20,11 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({ color = 
   return (
     <div id={id} style={style} data-testid={testId} role={role} tabIndex={tabIndex} className={`relative w-full max-w-xs${extraClassName ? ` ${extraClassName}` : ''}`}>
       <input 
-        type={type}
-        id={id}
-        name={name}
-        value={currentValue}
+        type="text" 
+        id="floating_preview_reg"
+        value={inputValue}
         onChange={handleChange}
-        onBlur={onBlur}
-        placeholder={placeholder} 
+        placeholder={placeholder ?? ' '}
         className={`block w-full px-4 py-3 text-sm text-white bg-slate-900 border border-slate-850 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:border-transparent peer transition-all duration-300 ${inputStyles[color] || inputStyles.violet}`} 
       />
       <label 

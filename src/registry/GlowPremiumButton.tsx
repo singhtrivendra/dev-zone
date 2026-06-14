@@ -19,7 +19,7 @@ export const GlowPremiumButton: React.FC<GlowPremiumButtonProps> = ({ color = 'v
   return (
     <button id={id} style={style} data-testid={testId} role={role} tabIndex={tabIndex} className={`relative group overflow-hidden px-8 py-3.5 rounded-xl bg-gradient-to-r text-white font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${glowBtnStyles[color]}${extraClassName ? ` ${extraClassName}` : ''}`}>
       <span className="relative z-10 flex items-center justify-center gap-2">
-        Get Started Free <Sparkles className="w-4 h-4" />
+        {children || <>Get Started Free <Sparkles className="w-4 h-4" /></>}
       </span>
       <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
     </Component>
