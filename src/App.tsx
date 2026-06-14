@@ -227,7 +227,7 @@ export default function App() {
   };
 
   return (
-    <BrowserRouter>
+    <AppProvider>
       <Routes>
         <Route path="/" element={
           <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
@@ -809,6 +809,6 @@ export default function App() {
         <Route path="/support/*" element={<ResponsiveMultiLevelNavigation />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
+    </AppProvider>
   );
 }
