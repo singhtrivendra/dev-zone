@@ -5,7 +5,9 @@ import React from 'react';
 
 interface ContributedButtonProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
-  as?: React.ElementType;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const ContributedButton = React.forwardRef<HTMLButtonElement, ContributedButtonProps>(({ color = 'violet' }, ref) => {

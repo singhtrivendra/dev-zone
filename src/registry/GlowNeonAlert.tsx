@@ -6,6 +6,9 @@ import { Info } from 'lucide-react';
 
 interface GlowNeonAlertProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  visible?: boolean;
+  defaultVisible?: boolean;
+  onDismiss?: () => void;
 }
 
 export const GlowNeonAlert = React.forwardRef<HTMLDivElement, GlowNeonAlertProps>(({ color = 'violet' }, ref) => {

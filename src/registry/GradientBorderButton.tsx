@@ -5,7 +5,9 @@ import React from 'react';
 
 interface GradientBorderButtonProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
-  as?: React.ElementType;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const GradientBorderButton = React.forwardRef<HTMLButtonElement, GradientBorderButtonProps>(({ color = 'violet' }, ref) => {

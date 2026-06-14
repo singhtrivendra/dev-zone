@@ -5,6 +5,9 @@ import React, { useState } from 'react';
 
 interface InteractiveNeumorphicToggleProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onChange?: (checked: boolean) => void;
 }
 
 export const InteractiveNeumorphicToggle = React.forwardRef<HTMLDivElement, InteractiveNeumorphicToggleProps>(({ color = 'violet' }, ref) => {
@@ -24,7 +27,7 @@ export const InteractiveNeumorphicToggle = React.forwardRef<HTMLDivElement, Inte
     <div ref={ref} className="flex items-center gap-3">
       <span className="text-xs font-semibold text-slate-400">System Audio</span>
       <button 
-        onClick={() => setIsChecked(!isChecked)}
+        onClick={handleToggle}
         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${isChecked ? bgStyle : 'bg-slate-800'}`}
       >
         <span 

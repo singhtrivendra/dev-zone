@@ -5,6 +5,9 @@ import React, { useState } from 'react';
 
 interface InteractiveGlowTabsProps {
   color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
 }
 
 export const InteractiveGlowTabs = React.forwardRef<HTMLDivElement, InteractiveGlowTabsProps>(({ color = 'violet' }, ref) => {
@@ -33,7 +36,7 @@ export const InteractiveGlowTabs = React.forwardRef<HTMLDivElement, InteractiveG
         return (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`flex-1 py-2 text-[11px] font-bold rounded-lg transition-all duration-300 cursor-pointer ${isActive ? `${currentStyle} shadow-lg border` : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             {tab.label}
