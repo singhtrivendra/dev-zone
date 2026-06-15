@@ -234,19 +234,34 @@ export const getCombinedComponents = (): UIComponent[] => {
   const htmlComps = getHtmlComponents();
   const all = [...registry, ...htmlComps];
 
-  const pinnedNames = [
+  const row1Names = [
     'Interactive Pricing Table',
     'Sleek Profile Card',
     'Sleek Pricing Card',
     'Aurora Iron Stone'
   ];
 
-  const pinnedList: UIComponent[] = [];
-  
-  pinnedNames.forEach(name => {
+  const row2Names = [
+    'Mist Lunar Nebula',
+    'Modern Auth Form',
+    'Cosmic Velvet Wave',
+    'Aurora Onyx Peak'
+  ];
+
+  const row1List: UIComponent[] = [];
+  row1Names.forEach(name => {
     const foundIdx = all.findIndex(c => c.name.toLowerCase().replace(/\s+/g, '') === name.toLowerCase().replace(/\s+/g, ''));
     if (foundIdx !== -1) {
-      pinnedList.push(all[foundIdx]);
+      row1List.push(all[foundIdx]);
+      all.splice(foundIdx, 1);
+    }
+  });
+
+  const row2List: UIComponent[] = [];
+  row2Names.forEach(name => {
+    const foundIdx = all.findIndex(c => c.name.toLowerCase().replace(/\s+/g, '') === name.toLowerCase().replace(/\s+/g, ''));
+    if (foundIdx !== -1) {
+      row2List.push(all[foundIdx]);
       all.splice(foundIdx, 1);
     }
   });
@@ -254,7 +269,7 @@ export const getCombinedComponents = (): UIComponent[] => {
   const remainingRegistry = all.filter(c => !c.id.startsWith('html-'));
   const remainingHtml = all.filter(c => c.id.startsWith('html-'));
 
-  return [...pinnedList, ...remainingRegistry, ...remainingHtml];
+  return [...row1List, ...row2List, ...remainingRegistry, ...remainingHtml];
 };
 
 export const COMPONENTS: UIComponent[] = getCombinedComponents();
