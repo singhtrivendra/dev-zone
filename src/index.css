@@ -105,3 +105,18 @@ html, body {
 * {
   min-width: 0;
 }
+
+/* Responsive media */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent horizontal scroll on mobile */
+html, body {
+  overflow-x: hidden;
+}
+
+* {
+  min-width: 0;
+}

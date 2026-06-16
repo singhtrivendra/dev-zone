@@ -99,7 +99,9 @@ function NavNode({
           if (item.path) onSelect(item.path);
         }}
         className={`flex w-full items-center justify-between gap-2 rounded-2xl px-4 py-3 text-left transition ${
-          isActive ? "bg-slate-900 text-white" : "bg-white hover:bg-slate-50"
+          isActive 
+            ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900" 
+            : "bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700/80"
         }`}
         style={{ paddingLeft: `${16 + depth * 18}px` }}
       >
@@ -107,17 +109,17 @@ function NavNode({
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">{item.label}</span>
             {item.badge ? (
-              <span className={`rounded-full px-2 py-0.5 text-[10px] ${isActive ? "bg-white/10" : "bg-slate-100"}`}>
+              <span className={`rounded-full px-2 py-0.5 text-[10px] ${isActive ? "bg-white/10 dark:bg-slate-900/20" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"}`}>
                 {item.badge}
               </span>
             ) : null}
           </div>
           {item.path ? (
-            <Link to={item.path} className={`mt-1 text-xs ${isActive ? "text-white/70" : "text-slate-400"}`} onClick={() => onSelect(item.path!)}>{item.path}</Link>
+            <Link to={item.path} className={`mt-1 text-xs ${isActive ? "text-white/70 dark:text-slate-500" : "text-slate-400 dark:text-slate-500"}`} onClick={() => onSelect(item.path!)}>{item.path}</Link>
           ) : null}
         </div>
         {hasChildren ? (
-          <span className={`text-xs ${isActive ? "text-white/80" : "text-slate-500"}`}>{isOpen ? "−" : "+"}</span>
+          <span className={`text-xs ${isActive ? "text-white/80 dark:text-slate-500" : "text-slate-500 dark:text-slate-400"}`}>{isOpen ? "−" : "+"}</span>
         ) : null}
       </button>
       {hasChildren && isOpen ? (
@@ -151,6 +153,29 @@ export default function ResponsiveMultiLevelNavigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [compact, setCompact] = useState(false);
 
+  // Sync dark mode state with localStorage and document element
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored === 'dark';
+      return document.documentElement.classList.contains('dark') || !stored;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+      root.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDark]);
+
   useEffect(() => {
     const onResize = () => setCompact(window.innerWidth < 900);
     onResize();
@@ -182,38 +207,49 @@ export default function ResponsiveMultiLevelNavigation() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900">
-      <div className="border-b border-slate-200 bg-white px-4 py-4 shadow-sm">
+    <div className="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+      <div className="border-b border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold">Responsive Multi-Level Navigation</h1>
-            <p className="mt-1 text-sm text-slate-500">Nested routes, adaptive collapse, and route awareness.</p>
+            <h1 className="text-xl font-semibold text-slate-900 dark:text-white">Responsive Multi-Level Navigation</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Nested routes, adaptive collapse, and route awareness.</p>
           </div>
-          {compact ? (
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
             <button
-              onClick={() => setMobileOpen((value) => !value)}
-              className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white"
+              onClick={() => setIsDark(!isDark)}
+              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all duration-300 cursor-pointer"
+              title="Toggle Theme"
             >
-              {mobileOpen ? "Close menu" : "Open menu"}
+              {isDark ? <Sun className="w-4.5 h-4.5 text-amber-500 animate-pulse-slow" /> : <Moon className="w-4.5 h-4.5 text-indigo-600" />}
             </button>
-          ) : null}
+
+            {compact ? (
+              <button
+                onClick={() => setMobileOpen((value) => !value)}
+                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                {mobileOpen ? "Close menu" : "Open menu"}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
 
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[300px_1fr]">
         <aside
-          className={`rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200 ${
+          className={`rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800 ${
             compact && !mobileOpen ? "hidden" : "block"
           }`}
         >
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold">Sections</h2>
-              <p className="mt-1 text-xs text-slate-500">Expand groups and move through nested routes.</p>
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white">Sections</h2>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Expand groups and move through nested routes.</p>
             </div>
             <button
               onClick={() => setExpanded({ workspace: true, reports: true })}
-              className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
+              className="rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-1 text-xs text-slate-600 dark:text-slate-300 transition cursor-pointer"
             >
               Expand all
             </button>
@@ -234,36 +270,36 @@ export default function ResponsiveMultiLevelNavigation() {
           </div>
         </aside>
 
-        <main className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+        <main className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
           <div className="flex flex-col gap-6">
             <div>
-              <h2 className="text-2xl font-semibold">Active route</h2>
-              <p className="mt-2 text-sm text-slate-600">
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Active route</h2>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-350">
                 The current selection is highlighted in the tree and the matching ancestor groups stay open so
                 users never lose context inside a dense information hierarchy.
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="text-xs uppercase tracking-wider text-slate-400">Route</div>
-                <div className="mt-2 text-lg font-semibold">{activePath}</div>
+              <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                <div className="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500">Route</div>
+                <div className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{activePath}</div>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="text-xs uppercase tracking-wider text-slate-400">Presentation</div>
-                <div className="mt-2 text-lg font-semibold">{compact ? "Mobile drawer" : "Desktop sidebar"}</div>
+              <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                <div className="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-550">Presentation</div>
+                <div className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">{compact ? "Mobile drawer" : "Desktop sidebar"}</div>
               </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="text-xs uppercase tracking-wider text-slate-400">Open sections</div>
-                <div className="mt-2 text-lg font-semibold">
+              <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 p-4">
+                <div className="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-555">Open sections</div>
+                <div className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
                   {Object.values(expanded).filter(Boolean).length}
                 </div>
               </div>
             </div>
 
-            <div className="rounded-3xl bg-slate-50 p-5">
-              <h3 className="text-base font-semibold">Preview content</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
+            <div className="rounded-3xl bg-slate-50 dark:bg-slate-800/50 p-5">
+              <h3 className="text-base font-semibold text-slate-900 dark:text-white">Preview content</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-350">
                 This layout is designed for admin panels and content-heavy applications. The recursive tree can
                 support additional levels without changing the rendering model, and the mobile drawer preserves
                 usable navigation in narrow screens.
@@ -276,7 +312,9 @@ export default function ResponsiveMultiLevelNavigation() {
                   key={path}
                   onClick={() => selectPath(path)}
                   className={`rounded-2xl px-4 py-3 text-left text-sm transition ${
-                    path === activePath ? "bg-slate-900 text-white" : "bg-slate-50 hover:bg-slate-100"
+                    path === activePath 
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900" 
+                      : "bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200"
                   }`}
                 >
                   {path}
