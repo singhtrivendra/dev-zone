@@ -3,12 +3,13 @@
 
 import React from 'react';
 import { Sparkles } from 'lucide-react';
+import type { BaseComponentProps } from './types';
 
-interface GlowPremiumButtonProps {
-  color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
+interface GlowPremiumButtonProps extends BaseComponentProps {
+  children?: React.ReactNode;
 }
 
-export const GlowPremiumButton: React.FC<GlowPremiumButtonProps> = ({ color = 'violet' }) => {
+export const GlowPremiumButton: React.FC<GlowPremiumButtonProps> = ({ color = 'violet', id, className: extraClassName, style, 'data-testid': testId, role, tabIndex, children }) => {
   const glowBtnStyles = {
     violet: 'from-violet-600 to-indigo-600 shadow-[0_0_20px_rgba(124,58,237,0.35)] hover:shadow-[0_0_30px_rgba(124,58,237,0.55)]',
     emerald: 'from-emerald-600 to-teal-600 shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:shadow-[0_0_30px_rgba(16,185,129,0.55)]',
@@ -18,9 +19,9 @@ export const GlowPremiumButton: React.FC<GlowPremiumButtonProps> = ({ color = 'v
   };
 
   return (
-    <button className={`relative group overflow-hidden px-8 py-3.5 rounded-xl bg-gradient-to-r text-white font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${glowBtnStyles[color]}`}>
+    <button id={id} style={style} data-testid={testId} role={role} tabIndex={tabIndex} className={`relative group overflow-hidden px-8 py-3.5 rounded-xl bg-gradient-to-r text-white font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${glowBtnStyles[color]}${extraClassName ? ` ${extraClassName}` : ''}`}>
       <span className="relative z-10 flex items-center justify-center gap-2">
-        Get Started Free <Sparkles className="w-4 h-4" />
+        {children || <>Get Started Free <Sparkles className="w-4 h-4" /></>}
       </span>
       <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
     </button>

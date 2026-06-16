@@ -2,12 +2,11 @@
 // description: A responsive tab controller switch with floating background indicator highlight animations.
 
 import React, { useState } from 'react';
+import type { BaseComponentProps } from './types';
 
-interface InteractiveGlowTabsProps {
-  color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
-}
+interface InteractiveGlowTabsProps extends BaseComponentProps {}
 
-export const InteractiveGlowTabs: React.FC<InteractiveGlowTabsProps> = ({ color = 'violet' }) => {
+export const InteractiveGlowTabs: React.FC<InteractiveGlowTabsProps> = ({ color = 'violet', id, className: extraClassName, style, 'data-testid': testId, role, tabIndex }) => {
   const [activeTab, setActiveTab] = useState('home');
 
   const accentStyles = {
@@ -27,7 +26,7 @@ export const InteractiveGlowTabs: React.FC<InteractiveGlowTabsProps> = ({ color 
   ];
 
   return (
-    <div className="flex p-1.5 rounded-xl bg-slate-900 border border-slate-800/80 max-w-sm w-full gap-1">
+    <div id={id} style={style} data-testid={testId} role={role} tabIndex={tabIndex} className={`flex p-1.5 rounded-xl bg-slate-900 border border-slate-800/80 max-w-sm w-full gap-1${extraClassName ? ` ${extraClassName}` : ''}`}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Sun, Moon } from "lucide-react";
 
 type NavItem = {
   id: string;

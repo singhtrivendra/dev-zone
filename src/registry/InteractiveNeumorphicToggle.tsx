@@ -2,12 +2,11 @@
 // description: A responsive toggle switch featuring high-fidelity active shadow glow indicators and sliding animations.
 
 import React, { useState } from 'react';
+import type { BaseComponentProps } from './types';
 
-interface InteractiveNeumorphicToggleProps {
-  color?: 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
-}
+interface InteractiveNeumorphicToggleProps extends BaseComponentProps {}
 
-export const InteractiveNeumorphicToggle: React.FC<InteractiveNeumorphicToggleProps> = ({ color = 'violet' }) => {
+export const InteractiveNeumorphicToggle: React.FC<InteractiveNeumorphicToggleProps> = ({ color = 'violet', id, className: extraClassName, style, 'data-testid': testId, role, tabIndex }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   const accentStyles = {
@@ -21,7 +20,7 @@ export const InteractiveNeumorphicToggle: React.FC<InteractiveNeumorphicTogglePr
   const bgStyle = accentStyles[color] || accentStyles.violet;
 
   return (
-    <div className="flex items-center gap-3">
+    <div id={id} style={style} data-testid={testId} role={role} tabIndex={tabIndex} className={`flex items-center gap-3${extraClassName ? ` ${extraClassName}` : ''}`}>
       <span className="text-xs font-semibold text-slate-400">System Audio</span>
       <button 
         onClick={() => setIsChecked(!isChecked)}
