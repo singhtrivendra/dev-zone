@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useMemo, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, useCallback, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Sparkles, Layout, FileText, Compass, Bell } from 'lucide-react';
 import { ALL_COMPONENTS as COMPONENTS } from '../data/components';
 
@@ -42,13 +43,33 @@ interface AppState {
 const AppContext = createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const searchQuery = searchParams.get('q') || '';
+  const selectedCategory = searchParams.get('category') || 'all';
+
+  const setSearchQuery = useCallback((q: string) => {
+    setSearchParams((prev: URLSearchParams) => {
+      const next = new URLSearchParams(prev);
+      if (q) next.set('q', q);
+      else next.delete('q');
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
+
+  const setSelectedCategory = useCallback((c: string) => {
+    setSearchParams((prev: URLSearchParams) => {
+      const next = new URLSearchParams(prev);
+      if (c && c !== 'all') next.set('category', c);
+      else next.delete('category');
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
   const [activeTabs, setActiveTabs] = useState<Record<string, TechFramework>>({});
   const [accentColors, setAccentColors] = useState<Record<string, ColorAccent>>({});
   const [previewSizes, setPreviewSizes] = useState<Record<string, PreviewSize>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [showPlayground, setShowPlayground] = useState(false);
   const [playgroundCode, setPlaygroundCode] = useState(`<div class="p-6 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-2xl text-center max-w-sm">
   <h3 class="text-lg font-bold mb-2">My Contributed UI</h3>
@@ -60,14 +81,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    if (darkMode) {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-  }, [darkMode]);
+    root.classList.add('light');
+    root.classList.remove('dark');
+  }, []);
 
   const getCategoryIcon = (iconName: string) => {
     const classStr = "w-4.5 h-4.5 shrink-0";
