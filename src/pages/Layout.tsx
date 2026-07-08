@@ -10,7 +10,7 @@ export default function Layout() {
   } = useAppContext();
 
   return (
-    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-[#06060a] text-white' : 'bg-slate-50 text-slate-900'}`}>
 
       <div className="absolute inset-0 z-0 pointer-events-none mesh-bg"></div>
 
@@ -119,7 +119,7 @@ export default function Layout() {
                 <textarea
                   value={playgroundCode}
                   onChange={(e) => setPlaygroundCode(e.target.value)}
-                  className="flex-1 w-full p-4 rounded-2xl bg-black/40 border border-slate-800 text-slate-250 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent resize-none leading-relaxed overflow-y-auto"
+                  className="flex-1 w-full p-4 rounded-2xl bg-black/40 border border-slate-800 text-slate-200 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent resize-none leading-relaxed overflow-y-auto"
                   placeholder="Paste your Tailwind HTML code here..."
                 />
               </div>
