@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useMemo, useEffect, useCall
 import { useSearchParams } from 'react-router-dom';
 import { Sparkles, Layout, FileText, Compass, Bell } from 'lucide-react';
 import { ALL_COMPONENTS as COMPONENTS } from '../data/components';
-
+import { useLocalStorage } from '../hooks/useLocalStorage';
 export type TechFramework = 'html' | 'react' | 'nextjs' | 'vue' | 'angular';
 export type ColorAccent = 'violet' | 'emerald' | 'rose' | 'blue' | 'amber';
 type PreviewSize = 'desktop' | 'tablet' | 'mobile';
@@ -65,19 +65,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return next;
     }, { replace: true });
   }, [setSearchParams]);
-  const [activeTabs, setActiveTabs] = useState<Record<string, TechFramework>>({});
-  const [accentColors, setAccentColors] = useState<Record<string, ColorAccent>>({});
-  const [previewSizes, setPreviewSizes] = useState<Record<string, PreviewSize>>({});
+  const [activeTabs, setActiveTabs] = useLocalStorage<Record<string, TechFramework>>(
+        "activeTabs",
+        {}
+    );
+  const [accentColors, setAccentColors] = useLocalStorage<Record<string, ColorAccent>>(
+        "accentColors",
+        {}
+    );
+  const [previewSizes, setPreviewSizes] = useLocalStorage<Record<string, PreviewSize>>(
+        "previewSizes",
+        {}
+    );
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [showPlayground, setShowPlayground] = useState(false);
-  const [playgroundCode, setPlaygroundCode] = useState(`<div class="p-6 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-2xl text-center max-w-sm">
+  const [playgroundCode, setPlaygroundCode] = useLocalStorage( "playgroundCode",`<div class="p-6 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-2xl text-center max-w-sm">
   <h3 class="text-lg font-bold mb-2">My Contributed UI</h3>
   <p class="text-xs text-white/80 leading-relaxed mb-4">Paste your own Tailwind CSS markup here to live preview your open-source component PR!</p>
   <button class="px-4 py-2 rounded-xl bg-white text-violet-600 text-xs font-bold hover:scale-105 active:scale-95 transition-all">Interactive Action</button>
 </div>`);
-  const [globalAccent, setGlobalAccent] = useState<ColorAccent>('violet');
-  const [globalTab, setGlobalTab] = useState<TechFramework>('react');
+  const [globalAccent, setGlobalAccent] =  useLocalStorage<ColorAccent>("globalAccent",'violet');
+  const [globalTab, setGlobalTab] = useLocalStorage<TechFramework>("globalTab",'react');
 
   useEffect(() => {
     const root = window.document.documentElement;
